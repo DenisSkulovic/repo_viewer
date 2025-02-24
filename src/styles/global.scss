@@ -1,0 +1,27 @@
+$primary-color: #007bff; // Bootstrap-like blue
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+.container {
+    margin-top: 20px;
+}
+
+.card {
+    padding: 15px;
+    border-radius: 8px;
+    background: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.btn-primary {
+    background-color: $primary-color;
+    border: none;
+
+    &:hover {
+        background-color: darken($primary-color, 10%);
+    }
+}

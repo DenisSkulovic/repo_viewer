@@ -15,9 +15,11 @@ export default function Home() {
     );
     const { ref, inView } = useInView();
     const [hydrated, setHydrated] = useState(false);
-    const [inputUsername, setInputUsername] = useState(username); // ✅ Separate input field state
+    const [inputUsername, setInputUsername] = useState(username);
+    const [sortedRepos, setSortedRepos] = useState(repos);
+    const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
 
-    // ensures the page waits for hydration
+    // Ensures the page waits for hydration
     useEffect(() => {
         setHydrated(true);
     }, []);
@@ -33,8 +35,12 @@ export default function Home() {
         ) {
             dispatch(fetchRepos());
         }
-    }, [hydrated, dispatch, inView, status, hasMore, username]); // ✅ Removed `repos.length` from dependencies
+    }, [hydrated, dispatch, inView, status, hasMore, username]);
 
+    useEffect(() => {
+        // Sort repos whenever the repo list updates
+        setSortedRepos([...repos].sort((a, b) => (sortOrder === "desc" ? b.stargazers_count - a.stargazers_count : a.stargazers_count - b.stargazers_count)));
+    }, [repos, sortOrder]);
 
     const handleSearch = () => {
         console.log("dispatching setUsername");
@@ -49,6 +55,9 @@ export default function Home() {
         console.log("done handleSearch");
     };
 
+    const toggleSortOrder = () => {
+        setSortOrder((prevOrder) => (prevOrder === "desc" ? "asc" : "desc"));
+    };
 
     if (!hydrated) return null;
 
@@ -65,14 +74,22 @@ export default function Home() {
                     className="form-control"
                     placeholder="Enter GitHub username"
                     value={inputUsername}
-                    onChange={(e) => setInputUsername(e.target.value)} // ✅ Only updates local state
+                    onChange={(e) => setInputUsername(e.target.value)}
                 />
                 <Button onClick={handleSearch} variant="primary">
                     Search
                 </Button>
             </div>
 
-            {repos.map((repo) => (
+            {repos.length > 0 && (
+                <div className="mb-3">
+                    <Button onClick={toggleSortOrder} variant="secondary">
+                        Sort by Stars ({sortOrder === "desc" ? "Descending" : "Ascending"})
+                    </Button>
+                </div>
+            )}
+
+            {sortedRepos.map((repo) => (
                 <Link href={`/repo/${repo.id}`} passHref key={repo.id}>
                     <Card className="mb-3">
                         <Card.Body>
