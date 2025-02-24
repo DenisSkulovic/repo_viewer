@@ -1,27 +1,168 @@
-$primary-color: #007bff; // Bootstrap-like blue
+// Define Light & Dark Mode Variables
+:root {
+    --primary-color: #007bff;
+    --secondary-color: #6c757d;
+    --background-color: #f8f9fa;
+    --text-color: #333;
+    --card-bg: white;
+    --border-radius: 8px;
+    --hover-primary: #0056b3;
+    --hover-secondary: #545b62;
+}
 
+[data-theme="dark"] {
+    --primary-color: #1e90ff;
+    --secondary-color: #aaa;
+    --background-color: #1a1a1a;
+    --text-color: #f8f9fa;
+    --card-bg: #222;
+    --hover-primary: #0077cc;
+    --hover-secondary: #888;
+}
+
+// Global Styles
 body {
     font-family: Arial, sans-serif;
-    background-color: #f8f9fa;
-    color: #333;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 0;
+    transition: background 0.3s ease-in-out, color 0.3s ease-in-out;
 }
 
+// Utility Classes (Bootstrap-like)
 .container {
-    margin-top: 20px;
+    width: 90%;
+    max-width: 800px;
+    margin: 20px auto;
 }
 
-.card {
-    padding: 15px;
-    border-radius: 8px;
-    background: white;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+.btn {
+    display: inline-block;
+    padding: 10px 15px;
+    text-align: center;
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-size: 16px;
+    transition: background 0.3s ease-in-out;
 }
 
 .btn-primary {
-    background-color: $primary-color;
-    border: none;
+    background-color: var(--primary-color);
+    color: white;
 
     &:hover {
-        background-color: darken($primary-color, 10%);
+        background-color: var(--hover-primary); // ✅ Manually set hover color
+    }
+}
+
+.btn-secondary {
+    background-color: var(--secondary-color);
+    color: white;
+
+    &:hover {
+        background-color: var(--hover-secondary); // ✅ Manually set hover color
+    }
+}
+
+// Card Styles (Bootstrap-like)
+.card {
+    background: var(--card-bg);
+    padding: 15px;
+    border-radius: var(--border-radius);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 15px;
+    transition: background 0.3s ease-in-out;
+}
+
+.card-title {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.card-text {
+    font-size: 16px;
+}
+
+// Repo Info
+.repo-info {
+    font-size: 14px;
+    color: #555;
+}
+
+// Input Field
+.input-group {
+    display: flex;
+    margin-bottom: 15px;
+}
+
+.input-group input {
+    flex-grow: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: var(--border-radius) 0 0 var(--border-radius);
+    background: var(--card-bg);
+    color: var(--text-color);
+    transition: background 0.3s ease-in-out, color 0.3s ease-in-out;
+}
+
+.input-group button {
+    border-radius: 0 var(--border-radius) var(--border-radius) 0;
+}
+
+// Spinner (Loading Animation)
+.spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid #ccc;
+    border-top-color: var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+// Contributors List
+.contributors {
+    list-style: none;
+    padding: 0;
+}
+
+.contributors li {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+}
+
+.contributors img {
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+}
+
+// Dark mode toggle button
+.dark-mode-toggle {
+    cursor: pointer;
+    padding: 8px 15px;
+    background: var(--primary-color);
+    color: white;
+    border-radius: 5px;
+    text-align: center;
+    transition: background 0.3s;
+
+    &:hover {
+        background: var(--hover-primary); // ✅ Manually set hover color
     }
 }

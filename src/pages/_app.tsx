@@ -1,9 +1,8 @@
 import { Provider } from "react-redux";
 import { store } from "../store/store";
-import "bootstrap/dist/css/bootstrap.min.css";
 import "../styles/global.scss";
 
-function MyApp({ Component, pageProps }) {
+function ReposApp({ Component, pageProps }: { Component: React.ComponentType; pageProps: any }) {
     return (
         <Provider store={store}>
             <Component {...pageProps} />
@@ -11,4 +10,4 @@ function MyApp({ Component, pageProps }) {
     );
 }
 
-export default MyApp;
+export default ReposApp;

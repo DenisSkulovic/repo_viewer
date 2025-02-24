@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { Container, Card, Button } from "react-bootstrap";
 import { useInView } from "react-intersection-observer";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchRepos, setUsername, resetRepos } from "../store/githubSlice";
@@ -19,7 +18,6 @@ export default function Home() {
     const [sortedRepos, setSortedRepos] = useState(repos);
     const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
 
-    // Ensures the page waits for hydration
     useEffect(() => {
         setHydrated(true);
     }, []);
@@ -38,21 +36,13 @@ export default function Home() {
     }, [hydrated, dispatch, inView, status, hasMore, username]);
 
     useEffect(() => {
-        // Sort repos whenever the repo list updates
         setSortedRepos([...repos].sort((a, b) => (sortOrder === "desc" ? b.stargazers_count - a.stargazers_count : a.stargazers_count - b.stargazers_count)));
     }, [repos, sortOrder]);
 
     const handleSearch = () => {
-        console.log("dispatching setUsername");
         dispatch(setUsername(inputUsername));
-
-        console.log("resetting repos");
         dispatch(resetRepos());
-
-        console.log("fetching repos");
         dispatch(fetchRepos());
-
-        console.log("done handleSearch");
     };
 
     const toggleSortOrder = () => {
@@ -62,51 +52,45 @@ export default function Home() {
     if (!hydrated) return null;
 
     return (
-        <Container className="mt-4">
-            <div className="d-flex justify-content-between align-items-center">
+        <div className="container">
+            <div className="d-flex justify-between">
                 <h1>GitHub Repo Explorer</h1>
                 <DarkModeToggle />
             </div>
 
-            <div className="input-group mb-3">
+            <div className="input-group">
                 <input
                     type="text"
-                    className="form-control"
                     placeholder="Enter GitHub username"
                     value={inputUsername}
                     onChange={(e) => setInputUsername(e.target.value)}
                 />
-                <Button onClick={handleSearch} variant="primary">
+                <button className="btn btn-primary" onClick={handleSearch}>
                     Search
-                </Button>
+                </button>
             </div>
 
             {repos.length > 0 && (
-                <div className="mb-3">
-                    <Button onClick={toggleSortOrder} variant="secondary">
-                        Sort by Stars ({sortOrder === "desc" ? "Descending" : "Ascending"})
-                    </Button>
-                </div>
+                <button className="btn btn-secondary" onClick={toggleSortOrder}>
+                    Sort by Stars ({sortOrder === "desc" ? "Descending" : "Ascending"})
+                </button>
             )}
 
             {sortedRepos.map((repo) => (
-                <Link href={`/repo/${repo.id}`} passHref key={repo.id}>
-                    <Card className="mb-3">
-                        <Card.Body>
-                            <Card.Title>{repo.name}</Card.Title>
-                            <Card.Text>{repo.description || "No description available"}</Card.Text>
-                            <div>
-                                ⭐ {repo.stargazers_count} | 🏷 {repo.language || "Unknown"}
-                            </div>
-                        </Card.Body>
-                    </Card>
+                <Link href={`/repo/${repo.id}`} key={repo.id}>
+                    <div className="card">
+                        <h2 className="card-title">{repo.name}</h2>
+                        <p className="card-text">{repo.description || "No description available"}</p>
+                        <div>
+                            ⭐ {repo.stargazers_count} | 🏷 {repo.language || "Unknown"}
+                        </div>
+                    </div>
                 </Link>
             ))}
 
-            {/* Infinite Scroll Trigger */}
             <div ref={ref} className="text-center">
                 <LoadingSpinner />
             </div>
-        </Container>
+        </div>
     );
 }
