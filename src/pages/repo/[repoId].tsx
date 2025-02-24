@@ -1,42 +1,14 @@
-import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchContributors } from "../../store/contributorsSlice";
-import { RootState, AppDispatch } from "../../store/store";
+import { useSelector } from "react-redux";
 import Link from "next/link";
+import { useFetchContributors } from "../../hooks/useFetchContributors";
 
 export default function RepoDetail() {
     const router = useRouter();
     const { repoId } = router.query;
-    const dispatch = useDispatch<AppDispatch>();
-
-    const repos = useSelector((state: RootState) => state.github.repos);
-    const contributors = useSelector(
-        (state: RootState) => state.contributors.contributors[repoId as string] || []
-    );
-    const status = useSelector((state: RootState) => state.contributors.status);
-
+    const repos = useSelector((state) => state.github.repos);
     const repo = repos.find((r) => r.id.toString() === repoId);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        if (!repo) return;
-
-        const cacheKey = `contributors-${repo.owner.login}-${repo.name}`;
-        const cachedContributors = JSON.parse(localStorage.getItem(cacheKey) || "null");
-
-        if (cachedContributors) {
-            dispatch({
-                type: "contributors/fetchContributors/fulfilled",
-                payload: { repo: repo.name, contributors: cachedContributors },
-            });
-            setLoading(false);
-        } else {
-            dispatch(fetchContributors({ owner: repo.owner.login, repo: repo.name })).finally(() => {
-                setLoading(false);
-            });
-        }
-    }, [repo, dispatch]);
+    const { contributors, loading } = useFetchContributors(repo);
 
     if (!repo) {
         return (
@@ -51,7 +23,9 @@ export default function RepoDetail() {
 
     return (
         <div className="container">
-            <button className="btn btn-secondary" onClick={() => router.back()}>🔙 Back</button>
+            <button className="btn btn-secondary" onClick={() => router.back()}>
+                🔙 Back
+            </button>
 
             <div className="card">
                 <h2 className="card-title">{repo.name}</h2>
@@ -72,12 +46,7 @@ export default function RepoDetail() {
                 <ul className="contributors">
                     {contributors.length > 0 ? contributors.map((contributor) => (
                         <li key={contributor.login}>
-                            <img
-                                src={contributor.avatar_url}
-                                alt={contributor.login}
-                                width="40"
-                                height="40"
-                            />
+                            <img src={contributor.avatar_url} alt={contributor.login} width="40" height="40" />
                             <a href={contributor.html_url} target="_blank" rel="noopener noreferrer">
                                 {contributor.login}
                             </a>
